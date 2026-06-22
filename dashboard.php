@@ -1,3 +1,18 @@
+<?php
+session_start();
+include "cek_login.php";
+
+// Jika session atau cookie tidak ada
+if (
+    !isset($_SESSION['login']) ||
+    !isset($_SESSION['username']) ||
+    !isset($_COOKIE['login'])
+) {
+    header("Location: login.php");
+    exit;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 
@@ -20,10 +35,11 @@
             </div>
 
             <nav class="sidebar-nav">
-                <a class="active" href="dashboard.html">Dashboard</a>
-                <a href="keungan.html">Keuangan</a>
+                <a class="active" href="dashboard.php">Dashboard</a>
+                <a href="keungan.php">Keuangan</a>
                 <a href="#">Laporan</a>
                 <a href="#">Pengaturan</a>
+                <a href="logout.php">Logout</a>
             </nav>
         </aside>
 

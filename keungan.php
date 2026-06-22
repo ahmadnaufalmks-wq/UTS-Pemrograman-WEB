@@ -1,3 +1,59 @@
+<?php
+include "cek_login.php";
+include "koneksi.php";
+
+// =============================
+// CREATE DATA KEUANGAN
+// =============================
+if (isset($_POST['tambah'])) {
+
+    $tipe = $_POST['tipe'];
+    $jenis = $_POST['jenis'];
+    $jumlah = $_POST['jumlah'];
+    $tanggal = $_POST['tanggal'];
+
+    $query = mysqli_query(
+        $conn,
+        "INSERT INTO keuangan(tipe, jenis, jumlah, tanggal)
+        VALUES('$tipe','$jenis','$jumlah','$tanggal')"
+    );
+
+    if ($query) {
+
+        echo "
+        <script>
+            alert('Data berhasil ditambahkan');
+            window.location='keungan.php';
+        </script>";
+
+        exit;
+    } else {
+
+        echo "
+        <script>
+            alert('Data gagal ditambahkan');
+        </script>";
+    }
+}
+
+// Mengambil data pemasukan
+$pemasukan = mysqli_query(
+    $conn,
+    "SELECT * FROM keuangan
+     WHERE tipe='pemasukan'
+     ORDER BY tanggal DESC"
+);
+
+// Mengambil data pengeluaran
+$pengeluaran = mysqli_query(
+    $conn,
+    "SELECT * FROM keuangan
+     WHERE tipe='pengeluaran'
+     ORDER BY tanggal DESC"
+);
+
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 
@@ -20,10 +76,11 @@
             </div>
 
             <nav class="sidebar-nav">
-                <a href="dashboard.html">Dashboard</a>
-                <a class="active" href="keungan.html">Keuangan</a>
+                <a href="dashboard.php">Dashboard</a>
+                <a class="active" href="keungan.php">Keuangan</a>
                 <a href="#">Laporan</a>
                 <a href="#">Pengaturan</a>
+                <a href="logout.php">Logout</a>
             </nav>
         </aside>
 
@@ -78,10 +135,10 @@
                             <input type="number" id="jumlah" name="jumlah" placeholder="0" min="0" required>
                         </div>
                         <div class="form-group">
-                            <label for="waktu">Tanggal</label>
-                            <input type="date" id="waktu" name="waktu" required>
+                            <label for="tanggal">Tanggal</label>
+                            <input type="date" id="tanggal" name="tanggal" required>
                         </div>
-                        <button type="submit" class="submit-btn">Tambah Data</button>
+                        <button type="submit" name="tambah" class="submit-btn">Tambah Data</button>
                     </form>
                 </div>
             </section>
@@ -102,36 +159,24 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>Donasi Bulanan</td>
-                                <td class="amount">Rp 5.000.000</td>
-                                <td>01 Mei 2026</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>Celengan Anak-Anak</td>
-                                <td class="amount">Rp 1.250.000</td>
-                                <td>02 Mei 2026</td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>Donasi Acara</td>
-                                <td class="amount">Rp 3.200.000</td>
-                                <td>05 Mei 2026</td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td>Celengan Masjid</td>
-                                <td class="amount">Rp 1.000.000</td>
-                                <td>07 Mei 2026</td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>Donasi Ramadhan</td>
-                                <td class="amount">Rp 2.000.000</td>
-                                <td>15 Mei 2026</td>
-                            </tr>
+                            <?php
+                            $no = 1;
+
+                            while ($row = mysqli_fetch_assoc($pemasukan)) {
+                            ?>
+
+                                <tr>
+                                    <td><?= $no++; ?></td>
+                                    <td><?= $row['jenis']; ?></td>
+                                    <td class="amount">
+                                        Rp <?= number_format($row['jumlah'], 0, ",", "."); ?>
+                                    </td>
+                                    <td><?= $row['tanggal']; ?></td>
+                                </tr>
+
+                            <?php
+                            }
+                            ?>
                         </tbody>
                     </table>
                 </div>
@@ -151,30 +196,22 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>Upah Petugas Kebersihan</td>
-                                <td class="amount">Rp 1.500.000</td>
-                                <td>03 Mei 2026</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>Biaya Listrik dan Air</td>
-                                <td class="amount">Rp 800.000</td>
-                                <td>08 Mei 2026</td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>Pembelian Perlengkapan Masjid</td>
-                                <td class="amount">Rp 1.200.000</td>
-                                <td>10 Mei 2026</td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td>Pemeliharaan Bangunan</td>
-                                <td class="amount">Rp 625.000</td>
-                                <td>12 Mei 2026</td>
-                            </tr>
+                            <?php
+                            $no = 1;
+
+                            while ($row = mysqli_fetch_assoc($pengeluaran)) {
+                            ?>
+                                <tr>
+                                    <td><?= $no++; ?></td>
+                                    <td><?= $row['jenis']; ?></td>
+                                    <td class="amount">
+                                        Rp <?= number_format($row['jumlah'], 0, ",", "."); ?>
+                                    </td>
+                                    <td><?= $row['tanggal']; ?></td>
+                                </tr>
+                            <?php
+                            }
+                            ?>
                         </tbody>
                     </table>
                 </div>
